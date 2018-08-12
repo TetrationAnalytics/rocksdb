@@ -1641,8 +1641,6 @@ libz.a:
 	cp zlib-$(ZLIB_VER)/libz.a .
 
 libbz2.a:
-	-rm -rf bzip2-*
-	yumdownloader --source bzip2-$(BZIP2_VER)
 	BZIP2_RPM_SHA256_ACTUAL=`$(SHA256_CMD) bzip2-$(BZIP2_VER)*rpm | cut -d ' ' -f 1`; \
 	if [ "$(BZIP2_RPM_SHA256)" != "$$BZIP2_SHA256_ACTUAL" ]; then \
 		echo bzip2 source rpm checksum mismatch, expected=\"$(BZIP2_RPM_SHA256)\" actual=\"$$BZIP2_RPM_SHA256_ACTUAL\"; \
@@ -1657,6 +1655,7 @@ libbz2.a:
 	tar xvzf bzip2-$(BZIP2_VER).tar.gz
 	cd bzip2-$(BZIP2_VER) && $(MAKE) CFLAGS='-fPIC -O2 -g -D_FILE_OFFSET_BITS=64 ${EXTRA_CFLAGS}' AR='ar ${EXTRA_ARFLAGS}'
 	cp bzip2-$(BZIP2_VER)/libbz2.a .
+	-rm -rf bzip2-*
 
 libsnappy.a:
 	-rm -rf snappy-$(SNAPPY_VER)
