@@ -1642,7 +1642,7 @@ libz.a:
 
 libbz2.a:
 	BZIP2_RPM_SHA256_ACTUAL=`$(SHA256_CMD) bzip2-$(BZIP2_VER)*rpm | cut -d ' ' -f 1`; \
-	if [ "$(BZIP2_RPM_SHA256)" != "$$BZIP2_SHA256_ACTUAL" ]; then \
+	if [ "$(BZIP2_RPM_SHA256)" != "$$BZIP2_RPM_SHA256_ACTUAL" ]; then \
 		echo bzip2 source rpm checksum mismatch, expected=\"$(BZIP2_RPM_SHA256)\" actual=\"$$BZIP2_RPM_SHA256_ACTUAL\"; \
 		exit 1; \
 	fi
