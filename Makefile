@@ -1642,7 +1642,6 @@ libz.a:
 
 libbz2.a:
 	-rm -rf bzip2-*
-	yum install -y yum-utils
 	yumdownloader --source bzip2-$(BZIP2_VER)
 	BZIP2_RPM_SHA256_ACTUAL=`$(SHA256_CMD) bzip2-$(BZIP2_VER)*rpm | cut -d ' ' -f 1`; \
 	if [ "$(BZIP2_RPM_SHA256)" != "$$BZIP2_SHA256_ACTUAL" ]; then \
