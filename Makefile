@@ -1609,9 +1609,9 @@ SHA256_CMD = sha256sum
 ZLIB_VER ?= 1.2.11
 ZLIB_SHA256 ?= c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
 ZLIB_DOWNLOAD_BASE ?= http://zlib.net
+BZIP2_RPM_SHA256 ?= 132b1a84977f5491075073413c42be1d08e20296849efe203b7482c18f9c96b7
 BZIP2_VER ?= 1.0.6
 BZIP2_SHA256 ?= a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd
-BZIP2_DOWNLOAD_BASE ?= http://www.bzip.org
 SNAPPY_VER ?= 1.1.4
 SNAPPY_SHA256 ?= 134bfe122fd25599bb807bb8130e7ba6d9bdb851e0b16efcb83ac4f5d0b70057
 SNAPPY_DOWNLOAD_BASE ?= https://github.com/google/snappy/releases/download
@@ -1669,8 +1669,12 @@ libz.a:
 	cp zlib-$(ZLIB_VER)/libz.a .
 
 libbz2.a:
-	-rm -rf bzip2-$(BZIP2_VER)
-	curl -O -L ${BZIP2_DOWNLOAD_BASE}/$(BZIP2_VER)/bzip2-$(BZIP2_VER).tar.gz
+	BZIP2_RPM_SHA256_ACTUAL=`$(SHA256_CMD) bzip2-$(BZIP2_VER)*rpm | cut -d ' ' -f 1`; \
+	if [ "$(BZIP2_RPM_SHA256)" != "$$BZIP2_RPM_SHA256_ACTUAL" ]; then \
+		echo bzip2 source rpm checksum mismatch, expected=\"$(BZIP2_RPM_SHA256)\" actual=\"$$BZIP2_RPM_SHA256_ACTUAL\"; \
+		exit 1; \
+	fi
+	rpm2cpio bzip2-$(BZIP2_VER)*rpm | cpio -idv
 	BZIP2_SHA256_ACTUAL=`$(SHA256_CMD) bzip2-$(BZIP2_VER).tar.gz | cut -d ' ' -f 1`; \
 	if [ "$(BZIP2_SHA256)" != "$$BZIP2_SHA256_ACTUAL" ]; then \
 		echo bzip2-$(BZIP2_VER).tar.gz checksum mismatch, expected=\"$(BZIP2_SHA256)\" actual=\"$$BZIP2_SHA256_ACTUAL\"; \
@@ -1679,6 +1683,7 @@ libbz2.a:
 	tar xvzf bzip2-$(BZIP2_VER).tar.gz
 	cd bzip2-$(BZIP2_VER) && $(MAKE) CFLAGS='-fPIC -O2 -g -D_FILE_OFFSET_BITS=64 ${EXTRA_CFLAGS}' AR='ar ${EXTRA_ARFLAGS}'
 	cp bzip2-$(BZIP2_VER)/libbz2.a .
+	-rm -rf bzip2-*
 
 libsnappy.a:
 	-rm -rf snappy-$(SNAPPY_VER)
